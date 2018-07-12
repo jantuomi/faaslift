@@ -1,6 +1,7 @@
 require('dotenv').config();
 const path = require('path');
 const chalk = require('chalk');
+const npm = require('npm-programmatic');
 
 if (!process.env.MONGO_URL) {
   throw new Error('No MONGO_URL set in .env!');
@@ -53,6 +54,25 @@ app.all('/:path*', async (req, res) => {
     res.send('Internal server error.');
   }
 });
+
+(async function () {
+  try {
+    const packagesToInstall = await models.packages.find({});
+    const packages = packagesToInstall.map(obj => obj.name);
+
+    packages.forEach(async pkg => {
+      console.info(`Installing package "${pkg}"...`);
+      await npm.install([pkg], {
+        cwd: __dirname,
+        save: false
+      });
+    });
+    console.info(`Successfully installed ${packages.length} NPM packages programmatically.`);
+  } catch (err) {
+    console.error(`Failed to install NPM packages programmatically.`);
+    console.error(err);
+  }
+})();
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`${chalk.blue('faas')} listening on port ${port}! URL: ${chalk.yellow(`http://localhost:${port}`)}`));
