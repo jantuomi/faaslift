@@ -30,7 +30,7 @@ app.all('/:path*', async (req, res) => {
     return res.send('No such endpoint.');
   }
 
-  const secretsList = await models.endpoints.find();
+  const secretsList = await models.secrets.find();
   if (!secretsList) {
     res.status(500);
     return res.send('Failed to fetch secrets from the database.');
