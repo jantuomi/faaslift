@@ -1,5 +1,7 @@
 # faaslift
 
+[![Build Status](https://travis-ci.org/jantuomi/faaslift.svg?branch=master)](https://travis-ci.org/jantuomi/faaslift)
+
 Small Function as a Service (FaaS) server built with Node.js and MongoDB. Useful for deploying quick endpoint prototypes to your own server.
 
 # Setup
