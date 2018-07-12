@@ -208,7 +208,7 @@ vorpal
     });
     const port = 1337;
     serverInstance = app.listen(port, () =>
-      console.log(`${chalk.blue('debug server')} listening on port ${port}! URL: ${chalk.yellow(`http://localhost:${port}`)}`)
+      this.log(`${chalk.yellow('Debug server')} listening on port ${port}! URL: ${chalk.yellow(`http://localhost:${port}`)}`)
     );
     callback();
   });
@@ -218,9 +218,9 @@ vorpal
   .action(async function (args, callback) {
     if (serverInstance) {
       serverInstance.close();
-      this.log(chalk.green('Server stopped.'));
+      this.log(`${chalk.yellow('Debug server')} stopped.`);
     } else {
-      this.log(chalk.red('Server is not running.'));
+      this.log(chalk.red('Debug server is not running.'));
     }
     callback();
   });
