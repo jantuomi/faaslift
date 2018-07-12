@@ -226,6 +226,59 @@ vorpal
   });
 
 vorpal
+  .command('secret set <key> <value>', 'Set a secret key value pair.')
+  .action(async function (args, callback) {
+    try {
+      await checkConnection(mongoURL, this);
+    } catch (err) {
+      showMongoNotSetError(vorpal);
+      return callback();
+    }
+
+    if (!args.key || !args.value) {
+			this.log('Please provide both "key" and "value" arguments.');
+			return callback();
+    }
+
+    try {
+      await models.secrets.update(
+        {key: args.key},
+        {key: args.key, value: args.value},
+        {upsert: true});
+      this.log(chalk.green(`Secret "${args.key}" set successfully.`));
+    } catch (err) {
+      this.log(chalk.red(`Failed to set secret ${args.key}!`));
+			this.log(chalk.red(String(err)));
+    }
+    callback();
+  });
+
+vorpal
+  .command('secret remove <key>', 'Remove a secret key value pair.')
+  .action(async function (args, callback) {
+    try {
+      await checkConnection(mongoURL, this);
+    } catch (err) {
+      showMongoNotSetError(vorpal);
+      return callback();
+    }
+
+    if (!args.key) {
+			this.log('Please provide the "key" argument.');
+			return callback();
+    }
+
+    try {
+      await models.secrets.remove({key: args.key});
+      this.log(chalk.green(`Secret "${args.key}" removed successfully.`));
+    } catch (err) {
+      this.log(chalk.red(`Failed to remove secret ${args.key}!`));
+			this.log(chalk.red(String(err)));
+    }
+    callback();
+  });
+
+vorpal
   .command('info', 'Show information about the session')
   .action(async function (args, callback) {
     this.log('Mongo URL: ' + chalk.yellow(mongoURL));

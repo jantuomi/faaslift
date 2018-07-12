@@ -21,20 +21,31 @@ app.all('/:path*', async (req, res) => {
   const path = req.params.path.split('/')[0];
   if (!path || path.length === 0) {
     res.status(400);
-    res.send('Empty endpoint.');
+    return res.send('Empty endpoint.');
   }
 
   const endpoint = await models.endpoints.findOne({name: path});
   if (!endpoint) {
     res.status(400);
-    res.send('No such endpoint.');
+    return res.send('No such endpoint.');
   }
+
+  const secretsList = await models.endpoints.find();
+  if (!secretsList) {
+    res.status(500);
+    return res.send('Failed to fetch secrets from the database.');
+  }
+
+  const secrets = secretsList.reduce((prev, cur) => ({
+    ...prev,
+    [cur.key]: cur.value
+  }), {});
 
   console.info(`${chalk.green(req.path)}, running endpoint "${chalk.yellow(endpoint.name)}".`);
   const {code} = endpoint;
   try {
     const func = requireFromString(code);
-    func(req, res);
+    func(req, res, secrets);
   } catch (err) {
     res.status(500);
     console.error(chalk.red(`Error in endpoint ${endpoint.name}! Details below.`));
