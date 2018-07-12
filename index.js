@@ -1,5 +1,6 @@
 require('dotenv').config();
 const chalk = require('chalk');
+const path = require('path');
 
 if (!process.env.MONGO_URL) {
   throw new Error('No MONGO_URL set in .env!');
@@ -11,8 +12,12 @@ const express = require('express');
 const app = express();
 const requireFromString = require('require-from-string');
 
-app.all('*', async (req, res) => {
-  const path = req.path.split('/')[1];
+app.get('/', function(req, res) {
+	res.sendFile(path.join(__dirname + '/frontpage.html'));
+});
+
+app.all('/:path*', async (req, res) => {
+  const path = req.params.path.split('/')[0];
   if (!path || path.length === 0) {
     res.status(400);
     res.send('Empty endpoint.');
