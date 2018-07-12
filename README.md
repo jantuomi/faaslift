@@ -47,6 +47,17 @@ module.exports = function (req, res) {
 
 `req` and `res` are Express objects.
 
+# Developing functions
+
+Implement the following in your function file.
+
+* Export a function (with `module.exports`).
+* Use the parameters `req` (request), `res` (response) and optionally, `secrets`.
+
+To test your function, use the `start dev <file>` command in the `faaslift` CLI. Use `stop dev` to stop the server.
+
+To `require` 3rd party libraries, they have to be installed on the host server with NPM.
+
 # Security
 
 The functions are *NOT* containerized in any way! This means that code running at an endpoint is e.g. able to crash the server or manipulate other endpoints, among other evil deeds, with a little bit of tinkering. That's why this project is solely meant for prototyping purposes.
