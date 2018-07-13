@@ -10,12 +10,19 @@ const db = require('monk')(process.env.MONGO_URL);
 const express = require('express');
 
 const app = express();
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 const requireFromString = require('require-from-string');
 const models = require('./models')(db);
 const {installPackagesFromDatabase} = require('./npm')(models);
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '/frontpage.html'));
+app.get('/', async (req, res) => {
+  const endpointObjects = await models.endpoints.find({});
+  const endpoints = endpointObjects.map(e => e.name);
+  res.render('frontpage', {
+    endpoints
+  });
 });
 
 app.all('/:path*', async (req, res) => {

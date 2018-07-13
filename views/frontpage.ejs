@@ -24,6 +24,17 @@
     Get started by creating a new endpoint with the command line tool.
     Check out the instructions from the <a href="https://github.com/jantuomi/faaslift/blob/master/README.md">README</a>.
     </p>
+    <h3>Currently active endpoints</h3>
+    <% if (!locals.endpoints || locals.endpoints.length === 0) { %>
+      <i>No endpoints active</i>
+    <% } %>
+    <ul>
+    <% (locals.endpoints || []).forEach(function (endpoint) { %>
+      <li>
+        <a href="/<%= endpoint %>"><%= endpoint %></a>
+      </li>
+    <% }); %>
+    </ul>
     <small>Styles partially borrowed from <a href="http://bettermotherfuckingwebsite.com/">bettermotherfuckingwebsite.com</a>.</small>
   </body>
 </html>
