@@ -279,7 +279,29 @@ vorpal
   });
 
 vorpal
-  .command('package add <package>', `Enqueue an NPM package installation on the host.`)
+  .command('secret list', 'List secret keys.')
+  .action(async function (args, callback) {
+    try {
+      await checkConnection(mongoURL, this);
+    } catch (err) {
+      showMongoNotSetError(vorpal);
+      return callback();
+    }
+
+    try {
+      const secretObjects = await models.secrets.find({});
+      secretObjects.forEach(secret => {
+        this.log(secret.key);
+      });
+    } catch (err) {
+      this.log(chalk.red(`Failed to list secrets!`));
+      this.log(chalk.red(String(err)));
+    }
+    callback();
+  });
+
+vorpal
+  .command('package add <package>', `${chalk.yellow('(Not implemented)')} Enqueue an NPM package installation on the host.`)
   .action(async function (args, callback) {
     try {
       await checkConnection(mongoURL, this);
@@ -307,7 +329,7 @@ vorpal
   });
 
 vorpal
-  .command('package remove <package>', `Dequeue an NPM package installation on the host. NOTE: Does not uninstall already installed packages.`)
+  .command('package remove <package>', `${chalk.yellow('(Not implemented)')} Dequeue an NPM package installation on the host. NOTE: Does not uninstall already installed packages.`)
   .action(async function (args, callback) {
     try {
       await checkConnection(mongoURL, this);
@@ -337,7 +359,7 @@ vorpal
   });
 
 vorpal
-  .command('package list', `List NPM packages in the installation queue.`)
+  .command('package list', `${chalk.yellow('(Not implemented)')} List NPM packages in the installation queue.`)
   .action(async function (args, callback) {
     try {
       await checkConnection(mongoURL, this);

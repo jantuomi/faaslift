@@ -45,7 +45,7 @@ Create a new endpoint with `create <name>`. Your endpoint is now live at http://
 Use `upload <file> <endpoint>` to upload a file from your current working directory to an endpoint. Below is an example of such a file.
 
 ```
-module.exports = function (req, res) {
+module.exports = function (req, res, secrets) {
   res.type('text/html');
   res.send(<h1>Hello world!</h1>');
 };
