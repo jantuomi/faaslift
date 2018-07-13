@@ -279,7 +279,7 @@ vorpal
   });
 
 vorpal
-  .command('package install <package>', `Install an NPM package on the host.`)
+  .command('package add <package>', `Enqueue an NPM package installation on the host.`)
   .action(async function (args, callback) {
     try {
       await checkConnection(mongoURL, this);
@@ -298,8 +298,61 @@ vorpal
         name: args.package
       });
       this.log(chalk.green(`Package "${args.package}" added successfully to list of packages to install.`));
+      this.log(`NOTE: Packages might take a while to be installed. The default refresh period for fetching new packages is 1 minute.`);
     } catch (err) {
       this.log(chalk.red(`Failed to add package ${args.package} to list of packages to install!`));
+      this.log(chalk.red(String(err)));
+    }
+    callback();
+  });
+
+vorpal
+  .command('package remove <package>', `Dequeue an NPM package installation on the host. NOTE: Does not uninstall already installed packages.`)
+  .action(async function (args, callback) {
+    try {
+      await checkConnection(mongoURL, this);
+    } catch (err) {
+      showMongoNotSetError(vorpal);
+      return callback();
+    }
+
+    if (!args.package) {
+      this.log('Please provide the "package" argument.');
+      return callback();
+    }
+
+    try {
+      await models.packages.remove({
+        name: args.package
+      });
+      const cmd = chalk.yellow(`npm uninstall ${args.package}`);
+      this.log(chalk.green(`Package "${args.package}" removed successfully from the list of packages to install.`));
+      this.log(`NOTE: Packages already installed are not uninstalled by this command.`);
+      this.log(`To completely uninstall this package from the host, run ${cmd} in the project directory on the host server.`);
+    } catch (err) {
+      this.log(chalk.red(`Failed to remove package ${args.package} from the list of packages to install!`));
+      this.log(chalk.red(String(err)));
+    }
+    callback();
+  });
+
+vorpal
+  .command('package list', `List NPM packages in the installation queue.`)
+  .action(async function (args, callback) {
+    try {
+      await checkConnection(mongoURL, this);
+    } catch (err) {
+      showMongoNotSetError(vorpal);
+      return callback();
+    }
+
+    try {
+      const packages = await models.packages.find({});
+      packages.forEach(pkg => {
+        this.log(pkg.name);
+      });
+    } catch (err) {
+      this.log(chalk.red(`Failed to get a list of packages.`));
       this.log(chalk.red(String(err)));
     }
     callback();
