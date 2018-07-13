@@ -13,7 +13,8 @@ Create a file called `.env` in the project directory and add the following field
 
 ```
 MONGODB_URL=<YOUR MONGO URL WITH AUTH>
-PORT=<YOUR FAVOURITE HTTP PORT>
+PORT=<YOUR FAVOURITE HTTP PORT (default 3000)>
+PACKAGE_POLL_INTERVAL=<PACKAGE POLL INTERVAL IN MILLISECONDS (default 60000)>
 ```
 
 A great place to host the Mongo instance is https://mlab.com/.
